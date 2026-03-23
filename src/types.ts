@@ -35,7 +35,6 @@ export interface SourceStatus {
 export type Theme = 'light' | 'dark';
 
 export const MAIN_CATEGORIES = [
-  'All',
   'News',
   'Sports',
   'Movies',
@@ -47,7 +46,8 @@ export const MAIN_CATEGORIES = [
   'Entertainment',
   'Horror',
   'Español',
-  'Weather'
+  'Weather',
+  'General'
 ] as const;
 
 export type MainCategory = typeof MAIN_CATEGORIES[number];
@@ -65,4 +65,5 @@ export const CATEGORY_KEYWORDS: Record<string, string[]> = {
   'Horror': ['horror', 'supernatural', 'sci-fi', 'mystery', 'thriller'],
   'Español': ['español', 'spanish', 'latino'],
   'Weather': ['weather'],
+  'General': ['general', 'other', 'misc'],
 };

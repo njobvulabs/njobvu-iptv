@@ -23,6 +23,10 @@ export function getCategoriesFromGroup(group: string): string[] {
     }
   }
   
+  if (categories.length === 0) {
+    categories.push('General');
+  }
+  
   return categories;
 }
 
