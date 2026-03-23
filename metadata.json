@@ -1,0 +1,5 @@
+{
+  "name": "Njobvu IPTV",
+  "description": "A modern IPTV streaming application with Material Design 3 aesthetic, featuring real-time M3U playlist parsing, favorites, and high-quality video playback.",
+  "requestFramePermissions": []
+}

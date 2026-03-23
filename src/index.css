@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6750A4;
+  --color-primary-light: #9A82DB;
+  --color-primary-dark: #4A3B7A;
+  
+  --color-bg-dark: #121212;
+  --color-paper-dark: #1E1E1E;
+  
+  --color-error-dark: #CF6679;
+
+  --radius-xl: 24px;
+}
+
+@layer base {
+  html {
+    @apply transition-colors duration-300;
+    color-scheme: dark;
+  }
+  
+  body {
+    @apply bg-bg-dark text-white;
+  }
+}
+
+@layer components {
+  .m3-card {
+    @apply rounded-xl transition-all duration-300 overflow-hidden;
+  }
+  
+  .m3-button {
+    @apply rounded-xl px-6 py-2.5 font-medium transition-all duration-200 flex items-center justify-center gap-2;
+  }
+
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border-white/20;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
+}
