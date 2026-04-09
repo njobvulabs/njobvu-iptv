@@ -177,6 +177,16 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
   const filteredChannels = useMemo(() => {
     let result = channels;
 
+    // If searching, search across all channels (Global Search)
+    if (deferredSearch) {
+      const query = deferredSearch.toLowerCase();
+      return channels.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.categories.some(cat => cat.toLowerCase().includes(query)) ||
+        c.group.toLowerCase().includes(query)
+      );
+    }
+
     if (selectedCategory === 'Favorites') {
       return favorites
         .map(id => channels.find(c => c.id === id))
@@ -193,17 +203,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
       });
     }
 
-    result = result.filter(c => c.categories.includes(selectedCategory));
-
-    if (deferredSearch) {
-      const query = deferredSearch.toLowerCase();
-      result = result.filter(c => 
-        c.name.toLowerCase().includes(query) || 
-        c.categories.some(cat => cat.toLowerCase().includes(query))
-      );
-    }
-
-    return result;
+    return result.filter(c => c.categories.includes(selectedCategory));
   }, [channels, selectedCategory, deferredSearch, favorites, history]);
 
   const featuredChannels = useMemo(() => {
