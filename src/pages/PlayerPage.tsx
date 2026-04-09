@@ -131,6 +131,15 @@ export default function PlayerPage({ channels }: PlayerPageProps) {
           enableWorker: true,
           lowLatencyMode: true,
           backBufferLength: 30,
+          capLevelToPlayerSize: true,
+          maxBufferLength: 10,
+          maxMaxBufferLength: 20,
+          startLevel: 0,
+          fragLoadingMaxRetry: 3,
+          manifestLoadingMaxRetry: 3,
+          levelLoadingMaxRetry: 3,
+          autoStartLoad: true,
+          startFragPrefetch: true,
         });
         hlsRef.current = hls;
 
