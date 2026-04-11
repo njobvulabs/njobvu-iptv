@@ -82,42 +82,55 @@ export function useM3U(): UseM3UReturn {
     const statuses: SourceStatus[] = [];
     let totalChannels: Channel[] = [];
 
-    for (const source of SOURCE_CONFIG) {
+    const fetchPromises = SOURCE_CONFIG.map(async (source) => {
       try {
         const res = await fetch(source.url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
         const parsed = parseM3U(text, source.url);
         
-        statuses.push({
-          url: source.url,
-          name: source.name,
-          success: true,
-          channelCount: parsed.length
-        });
-        
-        totalChannels = totalChannels.concat(parsed);
-        
-        if (isMountedRef.current) {
-          setSourceStatus([...statuses]);
-          setChannels(prev => {
-            const combined = [...prev, ...parsed];
-            return Array.from(new Map(combined.map(c => [c.id, c])).values());
-          });
-        }
+        return {
+          source,
+          parsed,
+          success: true
+        };
       } catch (err) {
+        return {
+          source,
+          error: err instanceof Error ? err.message : 'Unknown error',
+          success: false
+        };
+      }
+    });
+
+    const results = await Promise.all(fetchPromises);
+
+    for (const result of results) {
+      if (result.success && result.parsed) {
         statuses.push({
-          url: source.url,
-          name: source.name,
+          url: result.source.url,
+          name: result.source.name,
+          success: true,
+          channelCount: result.parsed.length
+        });
+        totalChannels = totalChannels.concat(result.parsed);
+      } else {
+        statuses.push({
+          url: result.source.url,
+          name: result.source.name,
           success: false,
           channelCount: 0,
-          error: err instanceof Error ? err.message : 'Unknown error'
+          error: result.error
         });
-        
-        if (isMountedRef.current) {
-          setSourceStatus([...statuses]);
-        }
       }
+    }
+
+    if (isMountedRef.current) {
+      setSourceStatus([...statuses]);
+      setChannels(prev => {
+        const combined = [...prev, ...totalChannels];
+        return Array.from(new Map(combined.map(c => [c.id, c])).values());
+      });
     }
 
     if (!isMountedRef.current) return;

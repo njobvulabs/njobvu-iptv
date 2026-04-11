@@ -726,7 +726,12 @@ export default function PlayerPage({ channels }: PlayerPageProps) {
           </div>
           
           <div className="flex-1 overflow-y-auto space-y-2">
-            {channels.map(c => (
+            {channels
+              .filter(c => 
+                c.group === channel.group || 
+                c.categories.some(cat => channel.categories.includes(cat))
+              )
+              .map(c => (
               <button
                 key={c.id}
                 onClick={() => {

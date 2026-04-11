@@ -159,7 +159,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
   const [isPending, startTransition] = useTransition();
   const [searchInput, setSearchInput] = useState('');
   const [searchHistory, setSearchHistory] = useLocalStorage<string[]>('searchHistory', []);
-  const [selectedCategory, setSelectedCategory] = useState('News');
+  const [selectedCategory, setSelectedCategory] = useLocalStorage<string>('selectedCategory', 'News');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [favorites] = useLocalStorage<string[]>('favorites', []);
   const [history] = useLocalStorage<{id: string, time: number}[]>('history', []);
