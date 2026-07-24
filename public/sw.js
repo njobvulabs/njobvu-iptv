@@ -4,7 +4,8 @@ const ASSETS_TO_CACHE = [
   '/index.html',
   '/manifest.json',
   '/favicon.png',
-  '/pwa-icon.png',
+  '/pwa-icon-192.png',
+  '/pwa-icon-512.png',
   '/apple-touch-icon.png'
 ];
 
@@ -31,12 +32,15 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through live video streams & external proxy APIs
+  if (event.request.method !== 'GET') return;
+
+  const url = event.request.url;
+  // Skip live streams and CORS proxies from SW interception
   if (
-    event.request.url.includes('.m3u') ||
-    event.request.url.includes('.m3u8') ||
-    event.request.url.includes('.ts') ||
-    event.request.url.includes('corsproxy')
+    url.includes('.m3u') ||
+    url.includes('.m3u8') ||
+    url.includes('.ts') ||
+    url.includes('corsproxy')
   ) {
     return;
   }
@@ -47,7 +51,6 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(event.request).catch(() => {
-        // Fallback for document navigation when offline
         if (event.request.mode === 'navigate') {
           return caches.match('/index.html');
         }
