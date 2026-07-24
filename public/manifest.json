@@ -1,0 +1,30 @@
+{
+  "short_name": "Njobvu IPTV",
+  "name": "Njobvu IPTV - Live TV Streaming",
+  "icons": [
+    {
+      "src": "/pwa-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0a0f",
+  "theme_color": "#6366f1",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "/",
+  "description": "Stream live television channels, sports, and news with Njobvu IPTV."
+}

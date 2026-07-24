@@ -18,7 +18,8 @@ import {
   ArrowUpDown,
   Lock,
   Download,
-  Folder
+  Folder,
+  Home as HomeIcon
 } from 'lucide-react';
 import { Channel, SourceStatus, MAIN_CATEGORIES, CustomFolder, SortOption, ParentalConfig } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -167,14 +168,14 @@ const FeaturedCard = memo(function FeaturedCard({ channel, isLocked, onSelect }:
   );
 });
 
-const ALL_CATEGORIES = [...MAIN_CATEGORIES];
+const ALL_CATEGORIES = ['All', ...MAIN_CATEGORIES];
 
 export default function HomePage({ channels, loading, error, sourceStatus, retrySource, isFromCache }: HomePageProps) {
   const navigate = useNavigate();
   const [isPending, startTransition] = useTransition();
   const [searchInput, setSearchInput] = useState('');
   const [searchHistory, setSearchHistory] = useLocalStorage<string[]>('searchHistory', []);
-  const [selectedCategory, setSelectedCategory] = useLocalStorage<string>('selectedCategory', 'News');
+  const [selectedCategory, setSelectedCategory] = useLocalStorage<string>('selectedCategory', 'All');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortOption, setSortOption] = useState<SortOption>('default');
 
@@ -257,6 +258,8 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
         c.categories.some(cat => cat.toLowerCase().includes(query)) ||
         c.group.toLowerCase().includes(query)
       );
+    } else if (selectedCategory === 'All' || selectedCategory === 'Home') {
+      result = channels;
     } else if (selectedCategory === 'Favorites') {
       result = favorites
         .map(id => channels.find(c => c.id === id))
@@ -393,6 +396,13 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
         
         <div className="flex-1 flex flex-col py-6 px-3 gap-2 overflow-y-auto">
           <NavButton 
+            icon={<HomeIcon size={20} />} 
+            label="Home" 
+            active={selectedCategory === 'All' || selectedCategory === 'Home'} 
+            collapsed={sidebarCollapsed}
+            onClick={() => handleCategoryClick('All')}
+          />
+          <NavButton 
             icon={<Heart size={20} />} 
             label="Favorites" 
             active={selectedCategory === 'Favorites'} 
@@ -457,6 +467,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-paper-dark border-t border-white/10 flex items-center justify-around z-50 px-2">
+        <NavButton icon={<HomeIcon size={20} />} label="" active={selectedCategory === 'All' || selectedCategory === 'Home'} collapsed={true} onClick={() => handleCategoryClick('All')} className="!p-2" />
         <NavButton icon={<Heart size={20} />} label="" active={selectedCategory === 'Favorites'} collapsed={true} onClick={() => handleCategoryClick('Favorites')} className="!p-2" />
         <NavButton icon={<History size={20} />} label="" active={selectedCategory === 'History'} collapsed={true} onClick={() => handleCategoryClick('History')} className="!p-2" />
         <NavButton icon={<Radio size={20} />} label="" collapsed={true} onClick={() => setShowEPG(true)} className="!p-2" />
@@ -562,7 +573,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
                   : "bg-paper-dark text-gray-400 hover:bg-white/5 border border-white/5"
               )}
             >
-              {cat}
+              {cat === 'All' ? 'All Channels' : cat}
             </button>
           ))}
 
@@ -593,7 +604,9 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
         {/* Sorting & View Controls */}
         <div className="flex items-center justify-between mb-4">
           <h2 className={cn("text-lg font-bold text-white", isPending && "opacity-50")}>
-            {selectedCategory.startsWith('folder_')
+            {selectedCategory === 'All' || selectedCategory === 'Home'
+              ? 'All Channels'
+              : selectedCategory.startsWith('folder_')
               ? customFolders.find(f => f.id === selectedCategory.replace('folder_', ''))?.name
               : selectedCategory} 
             <span className="text-gray-500 font-normal text-xs ml-2">({filteredChannels.length} channels)</span>
