@@ -6,6 +6,59 @@ export interface Channel {
   url: string;
   source: string;
   categories: string[];
+  tvgId?: string;
+  channelNumber?: number;
+}
+
+export interface CustomPlaylist {
+  id: string;
+  name: string;
+  type: 'm3u_url' | 'm3u_file' | 'xtream';
+  url?: string;
+  content?: string;
+  username?: string;
+  password?: string;
+  serverUrl?: string;
+  enabled: boolean;
+  createdAt: number;
+}
+
+export interface EPGProgram {
+  id: string;
+  channelId: string;
+  title: string;
+  description: string;
+  category: string;
+  startTime: number; // Unix timestamp ms
+  endTime: number;   // Unix timestamp ms
+  rating?: string;
+}
+
+export interface CustomFolder {
+  id: string;
+  name: string;
+  channelIds: string[];
+  createdAt: number;
+}
+
+export interface ParentalConfig {
+  enabled: boolean;
+  pin: string;
+  lockedCategories: string[];
+  lockedChannelIds: string[];
+}
+
+export type SortOption = 'default' | 'name-asc' | 'name-desc' | 'most-watched' | 'category';
+
+export type AspectRatioMode = 'contain' | 'cover' | '16:9' | '4:3' | 'fill';
+
+export interface StreamMetrics {
+  bitrateKbps: number;
+  bandwidthMbps: number;
+  droppedFrames: number;
+  totalFrames: number;
+  bufferSeconds: number;
+  latencySeconds: number;
 }
 
 export interface SearchHistory {
@@ -22,6 +75,7 @@ export interface WatchHistory {
 export interface HistoryEntry {
   id: string;
   time: number;
+  count?: number;
 }
 
 export interface SourceStatus {

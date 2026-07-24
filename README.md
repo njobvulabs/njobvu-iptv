@@ -1,28 +1,67 @@
 # Njobvu IPTV
 
-Njobvu IPTV is a modern, high-performance IPTV streaming application built with React, Vite, and Tailwind CSS. It provides a seamless experience for browsing and watching IPTV channels from multiple curated M3U sources.
+Njobvu IPTV is a modern, high-performance IPTV streaming application built with React, Vite, TypeScript, and Tailwind CSS. It delivers a seamless, feature-packed television streaming experience across desktop, mobile, and smart TV browsers.
 
-## Features
+---
 
-- **Multi-Source Support:** Automatically fetches and parses channels from reliable IPTV playlists (APSAT, Tubi, IPTV-org).
-- **Advanced HLS Player:** Powered by `hls.js`, supporting quality selection (up to 4K), Picture-in-Picture (PiP), and full-screen mode.
-- **Smart Categorization:** Channels are automatically grouped into categories like News, Sports, Movies, and more.
-- **Real-Time Search:** Fast, responsive search to find your favorite channels instantly.
-- **Favorites & History:** Keep track of your most-watched channels and quickly access your favorites.
-- **Responsive Design:** A beautiful, dark-themed UI optimized for both mobile and desktop devices.
-- **Performance Optimized:** Features lazy loading for channel icons and efficient state management for a smooth experience.
-- **Offline Cache:** Channels are cached locally for faster subsequent loads.
+## 🚀 Key Features
 
-## Tech Stack
+### 📡 Playlist & M3U Management
+- **Custom Playlists:** Add custom M3U/M3U8 URLs, upload local `.m3u` files, or connect using **Xtream Codes** login credentials.
+- **Multi-Source Bundling:** Automatically aggregates default sources with user custom playlists.
+- **CORS Proxy Integration:** Toggle custom CORS proxies to bypass restrictive media servers.
+
+### 📺 Electronic Program Guide (EPG)
+- **Live Program Schedules:** View current and upcoming show titles, program progress bars, and descriptions.
+- **TV Guide Modal:** Browse EPG schedules across all channels with quick search and channel filters.
+
+### 🎮 Smart TV Remote & Keyboard Navigation
+- **Direct Channel Jump:** Type numbers (e.g. `102`) to jump directly to a channel.
+- **Keyboard Shortcuts:**
+  - `Space` / `K` - Play / Pause
+  - `Up` / `Down` - Previous / Next Channel
+  - `Left` / `Right` - Volume Adjust
+  - `M` - Toggle Mute
+  - `F` - Fullscreen Mode
+  - `A` - Cycle Aspect Ratio
+  - `S` - Sleep Timer
+  - `I` - Stream Info & Metrics
+  - `C` / `L` - Channel List Drawer
+
+### 🎬 Advanced HLS Media Player
+- **Quality Switching:** Auto-adaptive or manual resolution picker (144p up to 4K).
+- **Aspect Ratio Controls:** Toggle between `Fit`, `Fill/Crop`, `16:9`, `4:3`, and `Stretch`.
+- **Multi-Track Audio & Subtitles:** Select available multi-language audio streams and closed captions.
+- **Stream Health & Metrics Overlay:** Monitor real-time Bitrate (Kbps), Bandwidth (Mbps), Buffer Health, and Latency.
+- **Sleep Timer:** Auto-stop playback with 15m, 30m, 1h, or 2h timers.
+
+### 🔒 Parental Controls & Security
+- **4-Digit PIN Protection:** Lock sensitive categories or specific channels behind a secure PIN.
+- **Category Locking:** Block access to adult or custom categories across the app.
+
+### 📁 Custom Folders & Organization
+- **User Folders:** Group favorite channels into custom folders (e.g. *Weekend Sports*, *Late Night Movies*).
+- **Global Search:** Instant real-time search across all channels, categories, and M3U playlists.
+- **Channel Sorting:** Sort channels Alphabetically, by Most Watched, or by Group.
+
+### 📱 Progressive Web App (PWA)
+- **Standalone Installation:** Installable on Android, iOS, Windows, and macOS as a standalone desktop/mobile app.
+- **Fast Startup:** Local caching for near-instant cold startup.
+
+---
+
+## 🛠️ Tech Stack
 
 - **Frontend:** React 19, TypeScript, Vite
 - **Styling:** Tailwind CSS 4
-- **Streaming:** HLS.js
+- **Streaming Engine:** HLS.js
 - **Icons:** Lucide React
 - **Routing:** React Router DOM 7
-- **State Management:** React Hooks & Local Storage
+- **Storage:** Web LocalStorage & IndexedDB Caching
 
-## Getting Started
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
 
@@ -51,10 +90,8 @@ Njobvu IPTV is a modern, high-performance IPTV streaming application built with 
    npm run build
    ```
 
-## Configuration
+---
 
-The application is pre-configured with several high-quality IPTV sources. You can modify or add more sources in `src/hooks/useM3U.ts`.
+## 📄 License
 
-## License
-
-This project is private and intended for personal use.
+This project is open-source under Njobvu Labs.

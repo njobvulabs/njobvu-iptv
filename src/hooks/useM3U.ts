@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Channel, SourceStatus } from '../types';
-import { parseM3U } from '../lib/utils';
+import { Channel, CustomPlaylist, SourceStatus } from '../types';
+import { parseM3U, buildXtreamM3UUrl } from '../lib/utils';
 
-const SOURCE_CONFIG = [
+const DEFAULT_SOURCES = [
   { url: 'https://www.apsattv.com/localnow.m3u', name: 'APSAT Local' },
   { url: 'https://www.apsattv.com/distro.m3u', name: 'APSAT Distro' },
   { url: 'https://raw.githubusercontent.com/BuddyChewChew/app-m3u-generator/refs/heads/main/playlists/tubi_all.m3u', name: 'Tubi' },
@@ -11,8 +11,9 @@ const SOURCE_CONFIG = [
 ];
 
 const CACHE_KEY = 'njobvu_channels_cache';
+const CUSTOM_PLAYLISTS_KEY = 'njobvu_custom_playlists';
 const CACHE_TTL = 60 * 60 * 1000;
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 
 interface CacheData {
   channels: Channel[];
@@ -30,6 +31,15 @@ interface UseM3UReturn {
   isRefreshing: boolean;
   refetch: () => void;
   retrySource: (url: string) => Promise<void>;
+}
+
+function getCustomPlaylists(): CustomPlaylist[] {
+  try {
+    const data = localStorage.getItem(CUSTOM_PLAYLISTS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
 }
 
 function getCache(): CacheData | null {
@@ -82,11 +92,34 @@ export function useM3U(): UseM3UReturn {
     const statuses: SourceStatus[] = [];
     let totalChannels: Channel[] = [];
 
-    const fetchPromises = SOURCE_CONFIG.map(async (source) => {
+    // Combine default sources with enabled custom playlists
+    const customList = getCustomPlaylists().filter(p => p.enabled);
+    const sourcesToFetch: { url: string; name: string; content?: string }[] = [
+      ...DEFAULT_SOURCES,
+      ...customList.map(p => {
+        let fetchUrl = p.url || '';
+        if (p.type === 'xtream' && p.serverUrl && p.username && p.password) {
+          fetchUrl = buildXtreamM3UUrl(p.serverUrl, p.username, p.password);
+        }
+        return {
+          url: fetchUrl || p.id,
+          name: p.name,
+          content: p.content
+        };
+      })
+    ];
+
+    const fetchPromises = sourcesToFetch.map(async (source) => {
       try {
-        const res = await fetch(source.url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const text = await res.text();
+        let text = '';
+        if (source.content) {
+          text = source.content;
+        } else {
+          const res = await fetch(source.url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          text = await res.text();
+        }
+        
         const parsed = parseM3U(text, source.url);
         
         return {
@@ -135,8 +168,6 @@ export function useM3U(): UseM3UReturn {
 
     if (!isMountedRef.current) return;
 
-    const successCount = statuses.filter(s => s.success).length;
-    const failCount = statuses.length - successCount;
     const finalChannels = Array.from(new Map(totalChannels.map(c => [c.id, c])).values());
 
     if (finalChannels.length === 0) {
@@ -193,7 +224,7 @@ export function useM3U(): UseM3UReturn {
   }, [fetchData, fetchAllSources]);
 
   const retrySource = useCallback(async (url: string) => {
-    const source = SOURCE_CONFIG.find(s => s.url === url);
+    const source = DEFAULT_SOURCES.find(s => s.url === url);
     if (!source) return;
 
     setSourceStatus(prev => prev.map(s => 

@@ -30,10 +30,20 @@ export function getCategoriesFromGroup(group: string): string[] {
   return categories;
 }
 
+export function buildXtreamM3UUrl(serverUrl: string, username: string, password: string): string {
+  let cleanServer = serverUrl.trim();
+  if (!cleanServer.startsWith('http://') && !cleanServer.startsWith('https://')) {
+    cleanServer = `http://${cleanServer}`;
+  }
+  cleanServer = cleanServer.replace(/\/+$/, '');
+  return `${cleanServer}/get.php?username=${encodeURIComponent(username.trim())}&password=${encodeURIComponent(password.trim())}&type=m3u_plus&output=ts`;
+}
+
 export function parseM3U(content: string, sourceUrl: string): any[] {
   const lines = content.split('\n');
   const channels: any[] = [];
   let currentChannel: any = null;
+  let chNum = 1;
 
   const getHash = (str: string) => {
     let hash = 0;
@@ -53,6 +63,7 @@ export function parseM3U(content: string, sourceUrl: string): any[] {
       
       const tvgIdMatch = line.match(/tvg-id="([^"]*)"/);
       const tvgLogoMatch = line.match(/tvg-logo="([^"]*)"/);
+      const tvgChnoMatch = line.match(/tvg-chno="([^"]*)"/);
       const groupTitleMatch = line.match(/group-title="([^"]*)"/);
       
       const rawGroup = groupTitleMatch ? groupTitleMatch[1] : '';
@@ -63,9 +74,10 @@ export function parseM3U(content: string, sourceUrl: string): any[] {
         group: rawGroup || 'General',
         categories: getCategoriesFromGroup(rawGroup),
         tvgId: tvgIdMatch ? tvgIdMatch[1] : '',
+        channelNumber: tvgChnoMatch ? parseInt(tvgChnoMatch[1], 10) : chNum++,
         source: sourceUrl
       };
-    } else if (line.startsWith('http') && currentChannel) {
+    } else if ((line.startsWith('http') || line.startsWith('https') || line.startsWith('rtmp') || line.startsWith('rtsp')) && currentChannel) {
       currentChannel.url = line;
       
       const urlHash = getHash(currentChannel.url);
