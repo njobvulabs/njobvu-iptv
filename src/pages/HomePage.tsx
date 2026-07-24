@@ -27,6 +27,7 @@ import { GridIcon, FeaturedIcon } from '../components/ChannelIcon';
 import { ParentalPinModal } from '../components/ParentalPinModal';
 import { AddFolderModal } from '../components/AddFolderModal';
 import { EPGGuideModal } from '../components/EPGGuideModal';
+import { InstallPwaModal } from '../components/InstallPwaModal';
 import { getCurrentAndNextEPG } from '../lib/epg';
 import { cn } from '../lib/utils';
 
@@ -201,6 +202,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
   // PWA Install Prompt
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [canInstall, setCanInstall] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -213,15 +215,7 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
   }, []);
 
   const handleInstallPWA = () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choice: any) => {
-        if (choice.outcome === 'accepted') {
-          setCanInstall(false);
-        }
-        setDeferredPrompt(null);
-      });
-    }
+    setShowInstallModal(true);
   };
 
   const deferredSearch = useDeferredValue(searchInput);
@@ -429,19 +423,17 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
             onClick={() => setShowFolderModal(true)}
           />
 
-          {canInstall && (
-            <button
-              onClick={handleInstallPWA}
-              className={cn(
-                "mt-4 p-3 rounded-2xl bg-primary/20 text-primary border border-primary/30 flex items-center gap-3 font-bold text-xs hover:bg-primary/30 transition-all",
-                sidebarCollapsed ? "justify-center w-12 h-12" : "w-full"
-              )}
-              title="Install Njobvu IPTV App"
-            >
-              <Download size={18} />
-              {!sidebarCollapsed && <span>Install App</span>}
-            </button>
-          )}
+          <button
+            onClick={handleInstallPWA}
+            className={cn(
+              "mt-4 p-3 rounded-2xl bg-primary/20 text-primary border border-primary/30 flex items-center gap-3 font-bold text-xs hover:bg-primary/30 transition-all",
+              sidebarCollapsed ? "justify-center w-12 h-12" : "w-full"
+            )}
+            title="Install Njobvu IPTV App"
+          >
+            <Download size={18} />
+            {!sidebarCollapsed && <span>Install App</span>}
+          </button>
         </div>
 
         <div className="p-3 border-t border-white/5">
@@ -484,14 +476,12 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
                 <Tv className="md:hidden" />
                 Njobvu IPTV
               </h1>
-              {canInstall && (
-                <button
-                  onClick={handleInstallPWA}
-                  className="md:hidden px-3 py-1 rounded-full bg-primary text-white text-xs font-bold flex items-center gap-1 shadow"
-                >
-                  <Download size={12} /> Install
-                </button>
-              )}
+              <button
+                onClick={handleInstallPWA}
+                className="md:hidden px-3 py-1 rounded-full bg-primary text-white text-xs font-bold flex items-center gap-1 shadow"
+              >
+                <Download size={12} /> Install
+              </button>
             </div>
             <p className="text-gray-400 text-sm">{channels.length} channels loaded</p>
           </div>
@@ -703,6 +693,13 @@ export default function HomePage({ channels, loading, error, sourceStatus, retry
           correctPin={parentalConfig.pin}
         />
       )}
+
+      <InstallPwaModal
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+        deferredPrompt={deferredPrompt}
+        onInstallSuccess={() => setCanInstall(false)}
+      />
     </div>
   );
 }
